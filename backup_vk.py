@@ -1,9 +1,5 @@
 import requests
 import configparser
-from pprint import pprint
-
-# api_key = 'dict.1.1.20241122T090405Z.c4d0e5f6d4c05169.3fc0db6773ad473bc6fa5b369cc22d5f6fadebe5'
-
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
@@ -39,17 +35,24 @@ class VKPhoto:
         return response['response']['items']
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print('Перестал работать контекстный менеджер')
+        pass
 
 
-with VKPhoto(vk_token, '207129311') as photos:
-    # print(photos)
-    for photo_item in photos:
-        print(photo_item['sizes'])
+def get_max_size_photo(dict_photos):
+    max_size = 0
+    max_photo = 0
+    for i in range(len(dict_photos)):
+        photo_size = dict_photos[i].get('width') * dict_photos[i].get('height')
+        if photo_size > max_size:
+            max_size = photo_size
+            need_elem = i
+    return dict_photos[max_photo].get('url'), dict_photos[max_photo].get('type')
 
 
-print('Программа работает дальше')
+if __name__ == '__main__':
 
-
-# vk = VK(vk_token)
-# pprint(vk.get_user_photos('207129311'))
+    with VKPhoto(vk_token, '207129311') as photos:
+        print(len(photos))
+        for photo_item in photos:
+            # print(photo_item['sizes'])
+            print(get_max_size_photo(photo_item['sizes']))
